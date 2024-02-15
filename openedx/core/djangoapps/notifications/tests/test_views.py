@@ -242,35 +242,39 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
                         'response_endorsed'
                     ],
                     'notification_types': {
-                        'core': {
-                            'web': True,
-                            'email': True,
-                            'push': True,
-                            'info': 'Notifications for responses and comments on your posts, and the ones you’re '
-                                    'following, including endorsements to your responses and on your posts.'
-                        },
                         'new_discussion_post': {
                             'web': False,
                             'email': False,
                             'push': False,
-                            'info': ''
+                            'info': '',
+                            'email_cadence': 'Daily',
                         },
                         'new_question_post': {
                             'web': False,
                             'email': False,
                             'push': False,
-                            'info': ''
+                            'info': '',
+                            'email_cadence': 'Daily',
                         },
                         'content_reported': {
                             'web': True,
                             'email': True,
                             'push': True,
-                            'info': ''
+                            'info': '',
+                            'email_cadence': 'Daily',
                         },
-                    },
+                        'core': {
+                            'web': True,
+                            'email': True,
+                            'push': True,
+                            'info': 'Notifications for responses and comments on your posts, and the ones you’re '
+                                    'following, including endorsements to your responses and on your posts.',
+                            'email_cadence': 'Daily',
+                        },
                     'non_editable': {
                         'core': ['web']
-                    }
+                        }
+                    },
                 },
                 'updates': {
                     'enabled': True,
@@ -290,7 +294,7 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
                         }
                     },
                     'non_editable': {}
-                }
+               }
             }
         }
         if not ENABLE_COURSEWIDE_NOTIFICATIONS.is_enabled(course.id):
@@ -372,6 +376,14 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
         ('discussion', 'core', 'email', True, status.HTTP_200_OK, 'type_update'),
         ('discussion', 'core', 'email', False, status.HTTP_200_OK, 'type_update'),
 
+        # Test for email cadence update
+        ('discussion', 'core', 'email_cadence', 'Daily', status.HTTP_200_OK, 'type_update'),
+        ('discussion', 'core', 'email_cadence', 'Weekly', status.HTTP_200_OK, 'type_update'),
+
+        # Test for app-wide channel update
+        ('discussion', None, 'email', True, status.HTTP_200_OK, 'app-wide-channel-update'),
+        ('discussion', None, 'email', False, status.HTTP_200_OK, 'app-wide-channel-update'),
+
         ('discussion', 'invalid_notification_type', 'email', True, status.HTTP_400_BAD_REQUEST, None),
         ('discussion', 'new_comment', 'invalid_notification_channel', False, status.HTTP_400_BAD_REQUEST, None),
     )
@@ -395,6 +407,7 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
 
         response = self.client.patch(self.path, json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, expected_status)
+        expected_data = self._expected_api_response()
 
         if update_type == 'app_update':
             expected_data = self._expected_api_response()
@@ -407,6 +420,15 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
             expected_data = remove_notifications_with_visibility_settings(expected_data)
             expected_data['notification_preference_config'][notification_app][
                 'notification_types'][notification_type][notification_channel] = value
+            self.assertEqual(response.data, expected_data)
+
+        elif update_type == 'app-wide-channel-update':
+            expected_data = remove_notifications_with_visibility_settings(expected_data)
+            app_prefs = expected_data['notification_preference_config'][notification_app]
+            for notification_type_name, notification_type_preferences in app_prefs['notification_types'].items():
+                non_editable_channels = app_prefs['non_editable'].get(notification_type_name, [])
+                if notification_channel not in non_editable_channels:
+                    app_prefs['notification_types'][notification_type_name][notification_channel] = value
             self.assertEqual(response.data, expected_data)
 
         if expected_status == status.HTTP_200_OK:
