@@ -1,6 +1,7 @@
 """
 User Auth Views Utils
 """
+import logging
 from django.conf import settings
 from django.contrib import messages
 from django.utils.translation import gettext as _
@@ -11,7 +12,11 @@ from common.djangoapps.third_party_auth import pipeline
 from common.djangoapps.third_party_auth.models import clean_username
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.geoinfo.api import country_code_from_ip
+import random
+import string
+from datetime import datetime
 
+log = logging.getLogger(__name__)
 API_V1 = 'v1'
 UUID4_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 ENTERPRISE_ENROLLMENT_URL_REGEX = fr'/enterprise/{UUID4_REGEX}/course/{settings.COURSE_KEY_REGEX}/enroll'
@@ -108,3 +113,48 @@ def get_mfe_context(request, redirect_to, tpa_hint=None):
         'countryCode': country_code,
     })
     return context
+
+
+def get_username_prefix(data):
+    """
+    Get the username prefix (name initials) based on the provided data.
+
+    Args:
+    - data (dict):  Registration payload.
+
+    Returns:
+    - str: Username prefix.
+    """
+
+    if data.get('first_name') and data.get('last_name'):
+        return f"{data['first_name'][0]}{data['last_name'][0]}"
+    elif data.get('name') and data.get('name').strip():
+        name_parts = data['name'].strip().split()
+        initials = [word[0] for word in name_parts[:2]]
+        return ''.join(initials)
+    return None
+
+
+def get_auto_generated_username(data):
+    """
+    Generate username based on learner's name initials, current date and configurable random string.
+
+    This function creates a username in the format <name_initials>_<YYMM>_<configurable_random_string>
+
+    The length of random string is determined by AUTO_GENERATED_USERNAME_RANDOM_STRING_LENGTH setting.
+
+     Args:
+    - data (dict):  Registration payload.
+
+    Returns:
+    - str: username.
+    """
+    current_year, current_month = datetime.now().strftime('%y %m').split()
+
+    random_string = ''.join(random.choices(
+        string.ascii_letters + string.digits,
+        k=settings.AUTO_GENERATED_USERNAME_RANDOM_STRING_LENGTH))
+
+    username_prefix = get_username_prefix(data)
+    username_suffix = f"{current_year}{current_month}_{random_string}"
+    return f"{username_prefix}_{username_suffix}" if username_prefix else username_suffix
