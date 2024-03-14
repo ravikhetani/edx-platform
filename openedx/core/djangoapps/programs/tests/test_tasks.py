@@ -1244,8 +1244,8 @@ class UpdateCertificateAvailableDateOnCourseUpdateTestCase(CredentialsApiConfigM
         """
         bad_course_run_key = "course-v1:OpenEdx+MtG101x+1T2024"
         expected_message = (
-            f"Unable to update the certificate available date in course run [{bad_course_run_key}]. A course overview "
-            "for this course run could not be found"
+            f"Unable to send the updated certificate available date of course run [{bad_course_run_key}] to "
+            "Credentials. A course overview for this course run could not be found"
         )
 
         self._update_credentials_api_config(True)

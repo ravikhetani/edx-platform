@@ -120,7 +120,7 @@ class CourseOverviewSignalsTestCase(ModuleStoreTestCase):
     @patch('openedx.core.djangoapps.content.course_overviews.signals.COURSE_CERT_DATE_CHANGE.send_robust')
     def test_cert_end_date_changed(self, mock_signal):
         """
-        This test ensures when an instrucor-paced course with a certificates display behavior of "END" updates its end
+        This test ensures when an instructor-paced course with a certificates display behavior of "END" updates its end
         date that we emit the `COURSE_CERT_DATE_CHANGE` signal.
         """
         course = CourseFactory.create(

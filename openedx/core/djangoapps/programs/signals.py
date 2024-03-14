@@ -27,6 +27,7 @@ def handle_course_cert_awarded(sender, user, course_key, mode, status, **kwargs)
     determine if the learner is also eligible to be awarded any program certificates.
 
     Args:
+        sender: class of the object instance that sent this signal
         user(User): The user to whom a course certificate was awarded
         course_key(CourseLocator): The course run key for which the course certificate was awarded
         mode(str): The "mode" of the course (e.g. Audit, Honor, Verified, etc.)
@@ -58,6 +59,7 @@ def handle_course_cert_changed(sender, user, course_key, mode, status, **kwargs)
     *********************
 
     Args:
+        sender: class of the object instance that sent this signal
         user(User): The user to whom a course certificate was awarded
         course_key(CourseLocator): The course run key for which the course certificate was awarded
         mode(str): The "mode" of the course (e.g. Audit, Honor, Verified, etc.)
@@ -88,6 +90,7 @@ def handle_course_cert_revoked(sender, user, course_key, mode, status, **kwargs)
     to determine if there are any program certificates that must be revoked too.
 
     Args:
+        sender: class of the object instance that sent this signal
         user(User): The user to whom a course certificate was revoked
         course_key(CourseLocator): The course run key for which the course certificate was revoked
         mode(str): The "mode" of the course (e.g. "audit", "honor", "verified", etc.)
@@ -115,6 +118,7 @@ def handle_course_cert_date_change(sender, course_key, **kwargs):  # pylint: dis
         - updating the certificate available date of the course run's course certificate configuration in Credentials
 
     Args:
+        sender: class of the object instance that sent this signal
         course_key(CourseLocator): The course run key of the course run which was updated
 
     Returns:
@@ -139,6 +143,7 @@ def handle_course_pacing_change(sender, updated_course_overview, **kwargs):  # p
     the visibiltiy of certificates on learners' program records.
 
     Args:
+        sender: class of the object instance that sent this signal
         updated_course_overview(CourseOverview): The course overview of the course run which was just updated
 
     Returns:

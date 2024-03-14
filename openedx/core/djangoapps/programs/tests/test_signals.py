@@ -287,7 +287,7 @@ class CourseCertAvailableDateChangedReceiverTest(TestCase):
 
     def test_programs_enabled(self, mock_is_learner_issuance_enabled, mock_visible_date_task, mock_cad_task):
         """
-        Ensures that the receiver function enqueus the expected celery tasks when the system is configured to use the
+        Ensures that the receiver function enqueues the expected celery tasks when the system is configured to use the
         Credentials IDA.
         """
         mock_is_learner_issuance_enabled.return_value = True

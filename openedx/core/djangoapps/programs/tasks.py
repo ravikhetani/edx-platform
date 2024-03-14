@@ -783,6 +783,14 @@ def update_certificate_available_date_on_course_update(self, course_key):
         )
         raise self.retry(exc=exception, countdown=countdown, max_retries=MAX_RETRIES)
 
+    course_overview = get_course_overview_or_none(course_key)
+    if not course_overview:
+        LOGGER.warning(
+            f"Unable to send the updated certificate available date of course run [{course_key}] to Credentials. A "
+            "course overview for this course run could not be found"
+        )
+        return
+
     # When updating the certificate available date of instructor-paced course runs,
     #   - If the display behavior is set to "A date after the course end date" (END_WITH_DATE), we should send the
     #     certificate available date set by the course team in Studio (and stored as part of the course runs Course
@@ -795,32 +803,22 @@ def update_certificate_available_date_on_course_update(self, course_key):
     #     the course runs certificate available date. A course run configured with this display behavior must not have a
     #     certificate available date associated with or the Credentials system will incorrectly hide certificates from
     #     learners.
-    course_overview = get_course_overview_or_none(course_key)
-    if (course_overview and course_overview.self_paced is False):
+    if (course_overview.self_paced is False):
         if course_overview.certificates_display_behavior == CertificatesDisplayBehaviors.END_WITH_DATE:
-            update_credentials_course_certificate_configuration_available_date.delay(
-                str(course_key),
-                str(course_overview.certificate_available_date)
-            )
+            new_certificate_available_date = str(course_overview.certificate_available_date)
         elif course_overview.certificates_display_behavior == CertificatesDisplayBehaviors.END:
-            update_credentials_course_certificate_configuration_available_date.delay(
-                str(course_key),
-                str(course_overview.end)  # `end_date` is deprecated, use `end` instead
-            )
+            new_certificate_available_date = str(course_overview.end)  # `end_date` is deprecated, use `end` instead
         elif course_overview.certificates_display_behavior == CertificatesDisplayBehaviors.EARLY_NO_INFO:
-            update_credentials_course_certificate_configuration_available_date.delay(
-                str(course_key),
-                None
-            )
+            new_certificate_available_date = None
     # Having a certificate available date associated with a self-paced course run is not allowed. Course runs with this
     # type of pacing should always award a certificate to learners immediately upon passing. If the system detects that
     # an update must be sent to Credentials, we *always* send a certificate available date of `None`. We are aware of a
     # defect that sometimes allows a certificate available date to be saved for a self-paced course run. This is an
     # attempt to prevent bad data from being synced to the Credentials service too.
-    elif (course_overview and course_overview.self_paced is True):
-        update_credentials_course_certificate_configuration_available_date.delay(str(course_key), None)
     else:
-        LOGGER.warning(
-            f"Unable to update the certificate available date in course run [{course_key}]. A course overview for this "
-            "course run could not be found"
-        )
+        new_certificate_available_date = None
+
+    update_credentials_course_certificate_configuration_available_date.delay(
+        str(course_key),
+        new_certificate_available_date
+    )
