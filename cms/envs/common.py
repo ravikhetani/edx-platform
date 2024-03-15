@@ -551,6 +551,17 @@ FEATURES = {
     #   https://github.com/openedx/openedx-events/issues/265
     # .. toggle_tickets: https://github.com/edx/edx-arch-experiments/issues/381
     'ENABLE_SEND_XBLOCK_LIFECYCLE_EVENTS_OVER_BUS': False,
+
+    # .. toggle_name: FEATURES['ENABLE_HOME_PAGE_COURSE_V2_API']
+    # .. toggle_implementation: DjangoSetting
+    # .. toggle_default: False
+    # .. toggle_description: Enables the new home page course v2 API, which is a new version of the home page course
+    #   API with pagination, filter and ordering capabilities.
+    # .. toggle_use_cases: open_edx
+    # .. toggle_creation_date: 2024-03-14
+    # .. toggle_target_removal_date: None
+    # .. toggle_tickets: https://github.com/openedx/edx-platform/pull/34173
+    'ENABLE_HOME_PAGE_COURSE_V2_API': False,
 }
 
 # .. toggle_name: ENABLE_COPPA_COMPLIANCE
