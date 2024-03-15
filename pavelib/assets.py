@@ -669,6 +669,9 @@ def webpack(options):
     static_root_cms, = Env.get_django_settings(["STATIC_ROOT"], "cms", settings=settings)
     js_env_extra_config_setting, = Env.get_django_json_settings(["JS_ENV_EXTRA_CONFIG"], "cms", settings=settings)
     js_env_extra_config = json.dumps(js_env_extra_config_setting or "{}")
+
+    print("Debugggggging")
+    print("This is the JS extra cofing: ", js_env_extra_config)
     environment = (
         "NODE_ENV={node_env} STATIC_ROOT_LMS={static_root_lms} STATIC_ROOT_CMS={static_root_cms} "
         "JS_ENV_EXTRA_CONFIG={js_env_extra_config}"
