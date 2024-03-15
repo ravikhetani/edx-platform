@@ -803,18 +803,19 @@ def update_certificate_available_date_on_course_update(self, course_key):
     #     the course runs certificate available date. A course run configured with this display behavior must not have a
     #     certificate available date associated with or the Credentials system will incorrectly hide certificates from
     #     learners.
-    if (course_overview.self_paced is False):
+    if course_overview.self_paced is False:
         if course_overview.certificates_display_behavior == CertificatesDisplayBehaviors.END_WITH_DATE:
             new_certificate_available_date = str(course_overview.certificate_available_date)
         elif course_overview.certificates_display_behavior == CertificatesDisplayBehaviors.END:
             new_certificate_available_date = str(course_overview.end)  # `end_date` is deprecated, use `end` instead
         elif course_overview.certificates_display_behavior == CertificatesDisplayBehaviors.EARLY_NO_INFO:
             new_certificate_available_date = None
-    # Having a certificate available date associated with a self-paced course run is not allowed. Course runs with this
-    # type of pacing should always award a certificate to learners immediately upon passing. If the system detects that
-    # an update must be sent to Credentials, we *always* send a certificate available date of `None`. We are aware of a
-    # defect that sometimes allows a certificate available date to be saved for a self-paced course run. This is an
-    # attempt to prevent bad data from being synced to the Credentials service too.
+    # Else, this course run is self-paced, and having a certificate available date associated with a self-paced course
+    # run is not allowed. Course runs with this type of pacing should always award a certificate to learners immediately
+    # upon passing. If the system detects that an update must be sent to Credentials, we *always* send a certificate
+    # available date of `None`. We are aware of a defect that sometimes allows a certificate available date to be saved
+    # for a self-paced course run. This is an attempt to prevent bad data from being synced to the Credentials service
+    # too.
     else:
         new_certificate_available_date = None
 
