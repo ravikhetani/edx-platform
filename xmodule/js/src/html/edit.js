@@ -178,15 +178,15 @@
           browser_spellcheck: true
         };
 
-        console.log("In edit.js this code is running");
+        Logger.log("In edit.js this code is running");
 
         if (typeof process != "undefined" && process.env.JS_ENV_EXTRA_CONFIG) {
-          // var tinyMceAdditionalPlugins = process.env.JS_ENV_EXTRA_CONFIG.TINYMCE_ADDITIONAL_PLUGINS;
-          var tinyMceAdditionalPlugins = [
-            { name: "paste", toolbar: "pastetext", extra_settings: { selector: "textarea" } },
-          ];
+          var tinyMceAdditionalPlugins = process.env.JS_ENV_EXTRA_CONFIG.TINYMCE_ADDITIONAL_PLUGINS;
+          // var tinyMceAdditionalPlugins = [
+          //   { name: "paste", toolbar: "pastetext", extra_settings: { selector: "textarea" } },
+          // ];
 
-          console.log("this is the plugins - " + JSON.stringify(tinyMceAdditionalPlugins));
+          Logger.log("this is the plugins - " + JSON.stringify(tinyMceAdditionalPlugins));
 
 
           // check if we have any additional plugins passed
@@ -225,8 +225,8 @@
           }
         }
 
-        console.log("tiny mce config is")
-        console.log(JSON.stringify(tinyMceConfig));
+        Logger.log("tiny mce config is")
+        Logger.log(JSON.stringify(tinyMceConfig));
 
         this.tiny_mce_textarea = $(".tiny-mce", this.element).tinymce(tinyMceConfig);
         tinymce.addI18n('en', {
