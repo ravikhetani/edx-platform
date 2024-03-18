@@ -180,6 +180,9 @@
 
         console.log("In edit.js this code is running");
         console.log(process.env.JS_ENV_EXTRA_CONFIG);
+        console.log("type of");
+        console.log(process);
+        console.log(process.env);
 
         if (typeof process != "undefined" && process.env.JS_ENV_EXTRA_CONFIG) {
           var tinyMceAdditionalPlugins = process.env.JS_ENV_EXTRA_CONFIG.TINYMCE_ADDITIONAL_PLUGINS;
