@@ -27,6 +27,10 @@ var defineFooter = new RegExp('(' + defineCallFooter.source + ')|('
 var staticRootLms = process.env.STATIC_ROOT_LMS || './test_root/staticfiles';
 var staticRootCms = process.env.STATIC_ROOT_CMS || (staticRootLms + '/studio');
 
+console.log("In webpack.common.config.js");
+console.log(process.env.JS_ENV_EXTRA_CONFIG);
+console.log(JSON.parse(process.env.JS_ENV_EXTRA_CONFIG));
+
 var workerConfig = function() {
     try {
         return {
