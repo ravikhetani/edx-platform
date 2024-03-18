@@ -179,7 +179,10 @@
         };
 
         if (typeof process != "undefined" && process.env.JS_ENV_EXTRA_CONFIG) {
-          var tinyMceAdditionalPlugins = process.env.JS_ENV_EXTRA_CONFIG.TINYMCE_ADDITIONAL_PLUGINS;
+          // var tinyMceAdditionalPlugins = process.env.JS_ENV_EXTRA_CONFIG.TINYMCE_ADDITIONAL_PLUGINS;
+          var tinyMceAdditionalPlugins = [
+            { name: "paste", extra_settings: { selector: "textarea", toolbar: "paste pastetext" } },
+          ];
           // check if we have any additional plugins passed
           if (tinyMceAdditionalPlugins) {
             // go over each plugin
