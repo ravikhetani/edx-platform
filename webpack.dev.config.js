@@ -9,6 +9,9 @@ var _ = require('underscore');
 
 var commonConfig = require('./webpack.common.config.js');
 
+console.log("In webpack.dev.config.js");
+console.log(process.env.JS_ENV_EXTRA_CONFIG);
+
 module.exports = _.values(Merge.smart(commonConfig, {
     web: {
         output: {
