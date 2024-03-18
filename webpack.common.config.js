@@ -27,6 +27,8 @@ var defineFooter = new RegExp('(' + defineCallFooter.source + ')|('
 var staticRootLms = process.env.STATIC_ROOT_LMS || './test_root/staticfiles';
 var staticRootCms = process.env.STATIC_ROOT_CMS || (staticRootLms + '/studio');
 
+process.env.JS_ENV_EXTRA_CONFIG=JSON.stringify({"TINYMCE_ADDITIONAL_PLUGINS":[{"name":"paste","toolbar": "pastetext", "extra_settings": { "selector": "textarea" }}]})
+
 console.log("In webpack.common.config.js");
 console.log(process.env.JS_ENV_EXTRA_CONFIG);
 console.log(JSON.parse(process.env.JS_ENV_EXTRA_CONFIG));
