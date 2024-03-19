@@ -11,7 +11,9 @@ var commonConfig = require('./webpack.common.config.js');
 
 console.log("In webpack.dev.config.js");
 console.log(process.env.JS_ENV_EXTRA_CONFIG);
-console.log(JSON.parse(process.env.JS_ENV_EXTRA_CONFIG));
+var extra_config =JSON.parse(process.env.JS_ENV_EXTRA_CONFIG)
+
+throw new Error("extra config value " + JSON.stringify(extra_config));   
 
 module.exports = _.values(Merge.smart(commonConfig, {
     web: {
